@@ -1,0 +1,28 @@
+Inputs: instr[16], data[16], reset;
+Outputs: write, dataAddr[16], instrAddr[16], result[16];
+
+
+// 1. more devices are needed to implement behavior as described in specification
+Parts:
+  decoder DECODER, mReg REGISTER16B, aReg REGISTER16B, pc COUNTER16B, alu ALU16B,
+  muxMR MUX16B, muxalu1 MUX16B, muxalu2 MUX4W16B, andjmp AND
+;
+
+// 2. wire them up
+Wires: 
+  instr->decoder.instr, 
+  reset->pc.reset, pc.out->instrAddr, mReg.out->dataAddr, alu.out->result,
+  decoder.loadA->aReg.load, decoder.loadM->mReg.load, decoder.loadD->write,
+  muxMR.out->mReg.in, decoder.cToM->muxMR.sel, 
+  decoder.constant->muxMR.in2[1:15], 0->muxMR.in2[16],
+  alu.out->muxMR.in1, alu.out->aReg.in, decoder.opCode->alu.opCode, 
+  muxalu1.out->alu.in1, decoder.op1->muxalu1.sel,
+  decoder.constant[1:5]->muxalu1.in2[1:5], 0->muxalu1.in2[6:16],
+  aReg.out->muxalu1.in1,
+  muxalu2.out->alu.in2, decoder.op2->muxalu2.sel,
+  decoder.constant[1:5]->muxalu2.in1[1:5], 
+  decoder.constant[5]->muxalu2.in1[6:16],  
+  aReg.out->muxalu2.in2, mReg.out->muxalu2.in3, data->muxalu2.in4,
+  mReg.out->pc.in,
+  andjmp.out->pc.load, decoder.jmpIfZ->andjmp.in1, alu.zero->andjmp.in2  
+;

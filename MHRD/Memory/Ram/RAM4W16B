@@ -1,0 +1,24 @@
+Inputs: in[16], load, address[2];
+Outputs: out[16];
+
+// 1. specify the components you want to use here
+Parts: 
+  reg1 REGISTER16B, reg2 REGISTER16B, 
+  reg3 REGISTER16B, reg4 REGISTER16B,
+  loaddmx DEMUX4W, datamux MUX4W16B
+;
+
+// 2. wire them up
+Wires: 
+  // link all in-s to every register's in
+  in->reg1.in, in->reg2.in, in->reg3.in, in->reg4.in,
+  // link a demux for load signal
+  load->loaddmx.in, address->loaddmx.sel,
+  // demux the load signal to every register
+  loaddmx.out1->reg1.load, loaddmx.out2->reg2.load,
+  loaddmx.out3->reg3.load, loaddmx.out4->reg4.load,
+  // use mux to select the data output
+  reg1.out->datamux.in1, reg2.out->datamux.in2,
+  reg3.out->datamux.in3, reg4.out->datamux.in4,
+  address->datamux.sel, datamux.out->out
+;

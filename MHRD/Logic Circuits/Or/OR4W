@@ -1,0 +1,15 @@
+Inputs: in[4];
+Outputs: out;
+
+// 1. specify the components you want to use here
+Parts: 
+  orall OR, or12 OR, or34 OR
+;
+
+// 2. wire them up
+Wires: 
+  in[1]->or12.in1, in[2]->or12.in2,
+  in[3]->or34.in1, in[4]->or34.in2,
+  or12.out->orall.in1, or34.out->orall.in2,
+  orall.out->out
+;

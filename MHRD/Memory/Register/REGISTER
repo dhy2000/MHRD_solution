@@ -1,0 +1,18 @@
+Inputs: in, load;
+Outputs: out;
+
+// DFF + MUX
+
+// 1. specify the components you want to use here
+Parts: 
+  dff DFF, mux MUX
+;
+
+// 2. wire them up
+Wires: 
+  load->mux.sel,
+  in->mux.in2,
+  dff.out->mux.in1,
+  mux.out->dff.in,
+  dff.out->out
+;

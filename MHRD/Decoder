@@ -1,0 +1,34 @@
+Inputs: instr[16];
+Outputs: cToM, loadA, loadD, loadM, op1, op2[2], opCode[4], jmpIfZ, constant[15];
+// 1. specify the components you want to use here
+Parts: 
+  // mux1cToM MUX, 
+  mux1jmpIfZ MUX,
+  mux1loadM MUX, mux1loadD MUX, mux1loadA MUX,
+  notdest1 NOT, notdest2 NOT,
+  andloadA AND, andloadM AND, andloadD AND
+;
+// 2. wire them up
+Wires: 
+  // MUX to deal with instr[16]==1
+  instr[16]->cToM, // instr[16]->mux1cToM.sel, 
+  instr[16]->mux1jmpIfZ.sel,
+  instr[16]->mux1loadA.sel, instr[16]->mux1loadD.sel, instr[16]->mux1loadM.sel,
+  // mux1cToM.out->cToM, 
+  mux1jmpIfZ.out->jmpIfZ,
+  mux1loadA.out->loadA, mux1loadD.out->loadD, mux1loadM.out->loadM,
+  // 1->mux1cToM.in2, 
+  0->mux1jmpIfZ.in2,
+  1->mux1loadM.in2, 0->mux1loadD.in2, 0->mux1loadA.in2,
+  instr[1:15]->constant,
+  // set loadA/loadD/loadM by destination, instr[14]->dest[1],instr[15]->dest[2]
+  instr[14]->notdest1.in, instr[15]->notdest2.in,
+  // 01->loadA=1, 10->loadM=1, 11->loadD=1  one-hot code
+  notdest1.out->andloadM.in1, instr[15]->andloadM.in2,
+  instr[14]->andloadA.in1, notdest2.out->andloadA.in2,
+  instr[14]->andloadD.in1, instr[15]->andloadD.in2,
+  andloadA.out->mux1loadA.in1, andloadD.out->mux1loadD.in1, 
+  andloadM.out->mux1loadM.in1,
+  instr[13]->op1, instr[11:12]->op2, instr[7:10]->opCode,
+  instr[6]->mux1jmpIfZ.in1
+;

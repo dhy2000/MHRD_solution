@@ -1,0 +1,22 @@
+Inputs: carryIn, in1, in2;
+Outputs: out, carryOut;
+
+// 1. specify the components you want to use here
+Parts: 
+  axorb XOR, aandb AND, xorcin XOR, andcin AND, or OR
+;
+
+// out = in1 ^ in2 ^ carryIn;
+// carryOut = (in1 & in2) | ( carryIn & (in1 ^ in2) );
+
+
+// 2. wire them up
+Wires: 
+  in1->axorb.in1, in2->axorb.in2,
+  in1->aandb.in1, in2->aandb.in2,
+  axorb.out->xorcin.in1, carryIn->xorcin.in2,
+  xorcin.out->out,
+  axorb.out->andcin.in1, carryIn->andcin.in2,
+  aandb.out->or.in1, andcin.out->or.in2,
+  or.out->carryOut
+;

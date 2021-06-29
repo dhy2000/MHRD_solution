@@ -1,0 +1,19 @@
+Inputs: in[4], load, reset;
+Outputs: out[4];
+
+// mux_load, mux_reset, register, add 1
+
+// 1. specify the components you want to use here
+Parts: 
+  muxload MUX4B, muxreset MUX4B, reg REGISTER4B, adder ADDER4B
+;
+
+// 2. wire them up
+Wires: 
+  load->muxload.sel, reset->muxreset.sel,
+  in->muxload.in2, adder.out->muxload.in1,
+  muxload.out->muxreset.in1, 0->muxreset.in2,
+  muxreset.out->reg.in, 1->reg.load, 
+  reg.out->adder.in1, 0->adder.in2, 1->adder.carryIn,
+  reg.out->out
+;
