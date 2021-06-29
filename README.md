@@ -1,3 +1,3 @@
 # MHRD Solutions
 
-My solutions for MHRD game.
+My solutions to MHRD game.
